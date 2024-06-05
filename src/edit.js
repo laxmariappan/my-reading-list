@@ -12,6 +12,8 @@ import { __ } from '@wordpress/i18n';
  * @see https://developer.wordpress.org/block-editor/reference-guides/packages/packages-block-editor/#useblockprops
  */
 import { useBlockProps } from '@wordpress/block-editor';
+import { useSelect } from '@wordpress/data';
+import { store as coreDataStore } from '@wordpress/core-data';
 
 /**
  * Lets webpack process CSS, SASS or SCSS files referenced in JavaScript files.
@@ -30,12 +32,28 @@ import './editor.scss';
  * @return {Element} Element to render.
  */
 export default function Edit() {
+	const books = useSelect(
+		select =>
+			select( coreDataStore ).getEntityRecords( 'postType', 'book' ),
+		[]
+	);
+	if ( ! books ) {
+		return (
+			<div {...useBlockProps()}>
+				<p>{__('My Reading List – hello from the editor!', 'my-reading-list')}</p>
+			</div>
+		);
+	}
 	return (
-		<p { ...useBlockProps() }>
-			{ __(
-				'My Reading List – hello from the editor!',
-				'my-reading-list'
-			) }
-		</p>
+		<div {...useBlockProps()}>
+			<p>{__('My Reading List – hello from the editor!', 'my-reading-list')}</p>
+			{books.map((book) => (
+				<div>
+					<h2>{book.title.rendered}</h2>
+					<img src={book.featured_image_src}/>
+					<div dangerouslySetInnerHTML={{__html: book.content.rendered}}></div>
+				</div>
+			))}
+		</div>
 	);
 }

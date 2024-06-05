@@ -49,3 +49,37 @@ function my_reading_list_register_book_post_type() {
 		)
 	);
 }
+
+// Adding a new (custom) block category and show that category at the top
+add_filter( 'block_categories_all', 'learn_wp_block_category', 10, 2);
+function learn_wp_block_category( $categories, $post ) {
+
+	array_unshift( $categories, array(
+		'slug'	=> 'learn-wp',
+		'title' => 'Learn WP'
+	) );
+
+	return $categories;
+}
+
+/**
+ * Add featured image to the book post type
+ */
+add_action( 'rest_api_init', 'my_reading_list_register_book_featured_image' );
+function my_reading_list_register_book_featured_image() {
+	register_rest_field(
+		'book',
+		'featured_image_src',
+		array(
+			'get_callback' => 'my_reading_list_get_book_featured_image_src',
+			'schema'       => null,
+		)
+	);
+}
+function my_reading_list_get_book_featured_image_src( $object ) {
+	if ( $object['featured_media'] ) {
+		$img = wp_get_attachment_image_src( $object['featured_media'], 'medium' );
+		return $img[0];
+	}
+	return false;
+}

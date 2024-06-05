@@ -1,15 +1,20 @@
 {
 	"$schema": "https://schemas.wp.org/trunk/block.json",
 	"apiVersion": 3,
-	"name": "create-block/my-reading-list",
-	"version": "0.1.0",
-	"title": "My Reading List",
-	"category": "widgets",
-	"icon": "smiley",
-	"description": "Example block scaffolded with Create Block tool.",
+	"name": "my-reading-list/reading-list-block",
+	"version": "0.0.1",
+	"title": "My Reading List Block",
+	"description": "Displays a list of books for a reading list.",
+	"category": "learn-wp",
+	"icon": "list-view",
 	"example": {},
 	"supports": {
-		"html": false
+		"html": false,
+		"align": true,
+		"color": {
+			"background": true,
+			"text": true
+		}
 	},
 	"textdomain": "my-reading-list",
 	"editorScript": "file:./index.js",
