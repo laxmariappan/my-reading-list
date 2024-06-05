@@ -26,7 +26,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 add_action( 'init', 'my_reading_list_reading_list_block_init' );
 function my_reading_list_reading_list_block_init() {
-	register_block_type( __DIR__ . '/build' );
+	register_block_type( __DIR__ . '/build',
+		['render_callback' => 'render_my_reading_list_block']
+	);
 }
 
 
@@ -82,4 +84,28 @@ function my_reading_list_get_book_featured_image_src( $object ) {
 		return $img[0];
 	}
 	return false;
+}
+function render_my_reading_list_block($attributes, $content) {
+
+	$args = array(
+		'post_type' => 'book',
+		'posts_per_page' => 5,
+	);
+
+	$query = new WP_Query($args);
+
+	if ($query->have_posts()) {
+		while ($query->have_posts()) {
+			$query->the_post();
+			$content .= '<div>';
+			$content .= '<h2>' . get_the_title() . '</h2>';
+			$content .= '<div><img src="' . get_the_post_thumbnail_url(get_post(), [150,150]) . '" /></div>';
+			$content .= '<div>' . get_the_content() . '</div>';
+			$content .= '</div>';
+		}
+	}
+
+	wp_reset_postdata();
+
+	return $content;
 }

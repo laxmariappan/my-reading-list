@@ -40,13 +40,12 @@ export default function Edit() {
 	if ( ! books ) {
 		return (
 			<div {...useBlockProps()}>
-				<p>{__('My Reading List – hello from the editor!', 'my-reading-list')}</p>
+				<p>{__('No posts found', 'my-reading-list')}</p>
 			</div>
 		);
 	}
 	return (
 		<div {...useBlockProps()}>
-			<p>{__('My Reading List – hello from the editor!', 'my-reading-list')}</p>
 			{books.map((book) => (
 				<div>
 					<h2>{book.title.rendered}</h2>
