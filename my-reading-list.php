@@ -88,7 +88,7 @@ function my_reading_list_get_book_featured_image_src( $object ) {
 function render_my_reading_list_block($attributes, $content) {
 
 	$args = array(
-		'post_type' => 'book',
+		'post_type' => $attributes['postType'] ?: 'book',
 		'posts_per_page' => 5,
 	);
 
@@ -108,4 +108,31 @@ function render_my_reading_list_block($attributes, $content) {
 	wp_reset_postdata();
 
 	return $content;
+}
+
+add_action( 'enqueue_block_editor_assets', 'my_reading_list_enqueue_scripts' );
+function my_reading_list_enqueue_scripts() {
+
+
+	// Get all custom post types
+	$post_types = get_post_types( array( '_builtin' => false ), 'objects' );
+
+	// Prepare post types for localization
+	$post_types_localize = array();
+	foreach ( $post_types as $post_type ) {
+		$post_types_localize[] = array(
+			'label' => $post_type->labels->singular_name,
+			'value' => $post_type->name,
+		);
+	}
+
+	// Localize the script with the post types data
+	wp_localize_script(
+		'jquery',
+		'myReadingListData',
+		array( 'postTypes' => $post_types_localize )
+	);
+
+	// Enqueue the script
+
 }

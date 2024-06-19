@@ -11,9 +11,11 @@ import { __ } from '@wordpress/i18n';
  *
  * @see https://developer.wordpress.org/block-editor/reference-guides/packages/packages-block-editor/#useblockprops
  */
-import { useBlockProps } from '@wordpress/block-editor';
+import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
 import { useSelect } from '@wordpress/data';
 import { store as coreDataStore } from '@wordpress/core-data';
+import { SelectControl } from '@wordpress/components';
+import { useState } from '@wordpress/element';
 
 /**
  * Lets webpack process CSS, SASS or SCSS files referenced in JavaScript files.
@@ -31,13 +33,22 @@ import './editor.scss';
  *
  * @return {Element} Element to render.
  */
-export default function Edit() {
-	const books = useSelect(
+export default function Edit({ setAttributes, attributes }) {
+
+
+	const { postType } = attributes;
+	const defaultPostType = postType && postType.length > 0 ? postType : 'book';
+	const [ selectedPostType, setSelectedPostType ] = useState( defaultPostType );
+
+	const posts = useSelect(
 		select =>
-			select( coreDataStore ).getEntityRecords( 'postType', 'book' ),
-		[]
+			select( coreDataStore ).getEntityRecords( 'postType', selectedPostType ),
+		[ selectedPostType ]
 	);
-	if ( ! books ) {
+
+	const postTypes = window.myReadingListData.postTypes;
+
+	if ( ! posts ) {
 		return (
 			<div {...useBlockProps()}>
 				<p>{__('No posts found', 'my-reading-list')}</p>
@@ -46,11 +57,23 @@ export default function Edit() {
 	}
 	return (
 		<div {...useBlockProps()}>
-			{books.map((book) => (
+			<InspectorControls>
+				<SelectControl
+					label="Post Type"
+					value={ selectedPostType }
+					options={ postTypes }
+					onChange={ ( newPostType ) => {
+						setSelectedPostType( newPostType );
+						setAttributes( { postType: newPostType } );
+					} }
+				/>
+			</InspectorControls>
+
+			{posts.map((post) => (
 				<div>
-					<h2>{book.title.rendered}</h2>
-					<img src={book.featured_image_src}/>
-					<div dangerouslySetInnerHTML={{__html: book.content.rendered}}></div>
+					<h2>{post.title.rendered}</h2>
+					<img src={post.featured_image_src}/>
+					<div dangerouslySetInnerHTML={{__html: post.content.rendered}}></div>
 				</div>
 			))}
 		</div>

@@ -16,6 +16,12 @@
 			"text": true
 		}
 	},
+	"attributes": {
+		"postType": {
+			"type": "string",
+			"default": "book"
+		}
+	},
 	"textdomain": "my-reading-list",
 	"editorScript": "file:./index.js",
 	"editorStyle": "file:./index.css",
